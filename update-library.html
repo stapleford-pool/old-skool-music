@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Track Library | Old Skool DJ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0a14;
+      --bg-2: #1a1226;
+      --card: #1f1630;
+      --card-hover: #2a1e40;
+      --text: #f3eefc;
+      --muted: #a99bc4;
+      --pink: #ff3ea5;
+      --cyan: #2de2e6;
+      --yellow: #ffd23f;
+      --green: #3ddc84;
+      --red: #ff5a5a;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Rubik', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(61, 220, 132, 0.14), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(255, 62, 165, 0.14), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 8px;
+    }
+
+    .logo {
+      font-family: 'Monoton', cursive;
+      font-size: 1.5rem;
+      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .back-link:hover { color: var(--text); background: var(--card); }
+
+    /* ---------- Menu ---------- */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-btn {
+      --accent: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      padding: 22px 24px;
+      background: var(--card);
+      color: var(--text);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu-btn:hover,
+    .menu-btn:focus-visible {
+      background: var(--card-hover);
+      border-color: var(--accent);
+      box-shadow: 0 0 24px -4px var(--accent);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .menu-btn:active { transform: translateY(0); }
+
+    .menu-btn .icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+    }
+
+    .menu-btn .icon svg { width: 26px; height: 26px; }
+
+    .menu-btn small {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .btn-add    { --accent: var(--green); }
+    .btn-edit   { --accent: var(--cyan); }
+    .btn-delete { --accent: var(--red); }
+
+    /* ---------- Back to Home ---------- */
+    .home-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 32px;
+      padding: 16px 22px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      color: var(--text);
+      border-color: var(--muted);
+      background: var(--card);
+      outline: none;
+    }
+
+    .home-link svg { width: 20px; height: 20px; }
+
+    /* ---------- Toast ---------- */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--bg-2);
+      border: 1px solid var(--green);
+      color: var(--text);
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    footer {
+      text-align: center;
+      padding: 20px 16px 28px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .menu-btn, .toast { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Old Skool DJ</a>
+    <a href="index.html" class="back-link">&larr; Home</a>
+  </header>
+
+  <main>
+    <h1>Update Track Library</h1>
+    <p class="subtitle">What would you like to do?</p>
+
+    <div class="menu">
+
+      <button class="menu-btn btn-add" data-page="add-track.html" data-label="Add New Track">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </span>
+        <span>Add New Track<small>Put a new track into the library</small></span>
+      </button>
+
+      <button class="menu-btn btn-edit" data-page="edit-track.html" data-label="Update Track Details">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </span>
+        <span>Update Track Details<small>Fix a name, year or category</small></span>
+      </button>
+
+      <button class="menu-btn btn-delete" data-page="delete-track.html" data-label="Delete Track">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </span>
+        <span>Delete Track<small>Remove a track from the library</small></span>
+      </button>
+
+    </div>
+
+    <a href="index.html" class="home-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+      Back to Home Page
+    </a>
+  </main>
+
+  <footer>Old Skool DJ &middot; Keep the classics spinning</footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Set to true once each page has been built.
+    // While false, clicking the button shows a "coming soon" message.
+    const PAGES_READY = {
+      'add-track.html': true,
+      'edit-track.html': true,
+      'delete-track.html': false
+    };
+
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.dataset.page;
+        if (PAGES_READY[page]) {
+          window.location.href = page;
+        } else {
+          showToast(`🎧 ${btn.dataset.label} — coming soon!`);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
