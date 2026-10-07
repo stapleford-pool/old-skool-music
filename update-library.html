@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Track Library | Old Skool DJ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0a14;
+      --bg-2: #1a1226;
+      --card: #1f1630;
+      --card-hover: #2a1e40;
+      --text: #f3eefc;
+      --muted: #a99bc4;
+      --pink: #ff3ea5;
+      --cyan: #2de2e6;
+      --yellow: #ffd23f;
+      --green: #3ddc84;
+      --red: #ff5a5a;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Rubik', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(61, 220, 132, 0.14), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(255, 62, 165, 0.14), transparent 45%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 8px;
+    }
+
+    .logo {
+      font-family: 'Monoton', cursive;
+      font-size: 1.5rem;
+      background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .back-link:hover { color: var(--text); background: var(--card); }
+
+    /* ---------- Menu ---------- */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-btn {
+      --accent: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      padding: 22px 24px;
+      background: var(--card);
+      color: var(--text);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu-btn:hover,
+    .menu-btn:focus-visible {
+      background: var(--card-hover);
+      border-color: var(--accent);
+      box-shadow: 0 0 24px -4px var(--accent);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .menu-btn:active { transform: translateY(0); }
+
+    .menu-btn .icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+    }
+
+    .menu-btn .icon svg { width: 26px; height: 26px; }
+
+    .menu-btn small {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .btn-add    { --accent: var(--green); }
+    .btn-edit   { --accent: var(--cyan); }
+    .btn-delete { --accent: var(--red); }
+    .btn-import { --accent: #ff8a3d; }
+    .btn-clear  { --accent: var(--red); border-color: rgba(255, 90, 90, 0.3); }
+
+    .danger-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 32px 0 16px;
+      color: var(--red);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .danger-divider::before,
+    .danger-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 90, 90, 0.25);
+    }
+
+    /* ---------- Clear Library dialog ---------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 3, 10, 0.8);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .dialog {
+      width: 100%;
+      max-width: 460px;
+      background: var(--bg-2);
+      border: 2px solid var(--red);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .dialog h2 { font-size: 1.3rem; font-weight: 800; }
+
+    .dialog-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 90, 90, 0.15);
+      color: var(--red);
+      margin-bottom: 14px;
+    }
+
+    .dialog-icon svg { width: 28px; height: 28px; }
+
+    .dialog p { color: var(--muted); margin-top: 8px; }
+    .dialog p strong { color: var(--text); }
+    .dialog .dialog-warn { color: var(--red); font-weight: 600; }
+
+    .dialog-actions { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+
+    .dialog-actions button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .btn-danger { flex: 1; background: var(--red); color: #0d0a14; border: none; }
+    .btn-danger:hover:not(:disabled) { box-shadow: 0 0 24px -4px var(--red); }
+    .dialog-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-cancel { background: transparent; color: var(--muted); border: 2px solid rgba(255, 255, 255, 0.12); }
+    .btn-cancel:hover:not(:disabled) { color: var(--text); border-color: var(--muted); }
+
+    .progress { height: 12px; background: var(--card); border-radius: 999px; overflow: hidden; margin-top: 18px; }
+    .progress-bar { height: 100%; width: 0; background: var(--red); transition: width 0.3s ease; }
+    .progress-text { color: var(--muted); font-size: 0.9rem; margin-top: 8px; }
+
+    .hidden { display: none !important; }
+
+    /* ---------- Back to Home ---------- */
+    .home-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 32px;
+      padding: 16px 22px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      color: var(--text);
+      border-color: var(--muted);
+      background: var(--card);
+      outline: none;
+    }
+
+    .home-link svg { width: 20px; height: 20px; }
+
+    /* ---------- Toast ---------- */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--bg-2);
+      border: 1px solid var(--green);
+      color: var(--text);
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    footer {
+      text-align: center;
+      padding: 20px 16px 28px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .menu-btn, .toast { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Old Skool DJ</a>
+    <a href="index.html" class="back-link">&larr; Home</a>
+  </header>
+
+  <main>
+    <h1>Update Track Library</h1>
+    <p class="subtitle">What would you like to do?</p>
+
+    <div class="menu">
+
+      <button class="menu-btn btn-add" data-page="add-track.html" data-label="Add New Track">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </span>
+        <span>Add New Track<small>Put a new track into the library</small></span>
+      </button>
+
+      <button class="menu-btn btn-edit" data-page="edit-track.html" data-label="Update Track Details">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </span>
+        <span>Update Track Details<small>Fix a name, year or category</small></span>
+      </button>
+
+      <button class="menu-btn btn-delete" data-page="delete-track.html" data-label="Delete Track">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </span>
+        <span>Delete Track<small>Remove a track from the library</small></span>
+      </button>
+
+      <button class="menu-btn btn-import" data-page="import-tracks.html" data-label="Import Tracks">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        </span>
+        <span>Import Tracks<small>Add lots of tracks from a spreadsheet</small></span>
+      </button>
+
+    </div>
+
+    <div class="danger-divider">Danger zone</div>
+
+    <button type="button" class="menu-btn btn-clear" id="clearLibraryBtn">
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+      <span>Clear Library<small>Delete every track in the library</small></span>
+    </button>
+
+    <a href="index.html" class="home-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+      Back to Home Page
+    </a>
+  </main>
+
+  <footer>Old Skool DJ &middot; Keep the classics spinning</footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Clear Library warning -->
+  <div class="overlay hidden" id="clearOverlay" role="dialog" aria-modal="true" aria-labelledby="clearTitle">
+    <div class="dialog">
+      <div class="dialog-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h2 id="clearTitle">Clear the whole library?</h2>
+      <p id="clearText">Checking how many tracks you have…</p>
+      <p class="dialog-warn">This permanently deletes every track and can't be undone.</p>
+
+      <div class="progress hidden" id="clearProgress"><div class="progress-bar" id="clearBar"></div></div>
+      <p class="progress-text hidden" id="clearProgressText"></p>
+
+      <div class="dialog-actions" id="clearActions">
+        <button type="button" class="btn-danger" id="clearYes" disabled>Yes, clear library</button>
+        <button type="button" class="btn-cancel" id="clearNo">No, keep my tracks</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set to true once each page has been built.
+    // While false, clicking the button shows a "coming soon" message.
+    const PAGES_READY = {
+      'add-track.html': true,
+      'edit-track.html': true,
+      'delete-track.html': true,
+      'import-tracks.html': true
+    };
+
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    document.querySelectorAll('.menu-btn[data-page]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const page = btn.dataset.page;
+        if (PAGES_READY[page]) {
+          window.location.href = page;
+        } else {
+          showToast(`🎧 ${btn.dataset.label} — coming soon!`);
+        }
+      });
+    });
+  </script>
+
+  <script type="module">
+    import { db, TRACKS_COLLECTION } from "./firebase-config.js";
+    import { collection, getDocs, writeBatch }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const BATCH_SIZE = 400;   // Firebase allows up to 500 changes per batch
+    const $ = id => document.getElementById(id);
+
+    const overlay  = $("clearOverlay");
+    const text     = $("clearText");
+    const yesBtn   = $("clearYes");
+    const noBtn    = $("clearNo");
+    const progress = $("clearProgress");
+    const bar      = $("clearBar");
+    const progText = $("clearProgressText");
+
+    let docs = [];
+    let busy = false;
+
+    function setMessage(parts) {
+      text.innerHTML = "";
+      parts.forEach(p => text.append(typeof p === "string" ? p : Object.assign(document.createElement("strong"), { textContent: p.bold })));
+    }
+
+    // Open the warning and count the tracks
+    $("clearLibraryBtn").addEventListener("click", async () => {
+      overlay.classList.remove("hidden");
+      yesBtn.disabled = true;
+      progress.classList.add("hidden");
+      progText.classList.add("hidden");
+      $("clearActions").classList.remove("hidden");
+      text.textContent = "Checking how many tracks you have…";
+      noBtn.focus();
+
+      try {
+        const snap = await getDocs(collection(db, TRACKS_COLLECTION));
+        docs = snap.docs;
+        if (docs.length === 0) {
+          text.textContent = "Your library is already empty. There's nothing to clear.";
+          return;
+        }
+        setMessage(["You're about to delete ", { bold: `all ${docs.length.toLocaleString()} tracks` }, " from your library."]);
+        yesBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        text.textContent = `Couldn't check your library: ${err.message}`;
+      }
+    });
+
+    function closeDialog() {
+      if (busy) return;
+      overlay.classList.add("hidden");
+    }
+
+    noBtn.addEventListener("click", closeDialog);
+    overlay.addEventListener("click", e => { if (e.target === overlay) closeDialog(); });
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && !overlay.classList.contains("hidden")) closeDialog();
+    });
+
+    // Yes → delete everything in batches
+    yesBtn.addEventListener("click", async () => {
+      busy = true;
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      progress.classList.remove("hidden");
+      progText.classList.remove("hidden");
+
+      const total = docs.length;
+      let done = 0;
+      const update = () => {
+        bar.style.width = `${Math.round((done / total) * 100)}%`;
+        progText.textContent = `${done.toLocaleString()} of ${total.toLocaleString()} tracks deleted — keep this page open`;
+      };
+      update();
+
+      try {
+        for (let i = 0; i < total; i += BATCH_SIZE) {
+          const chunk = docs.slice(i, i + BATCH_SIZE);
+          const batch = writeBatch(db);
+          chunk.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+          done += chunk.length;
+          update();
+        }
+
+        $("clearTitle").textContent = "Library cleared";
+        text.textContent = `All ${total.toLocaleString()} tracks have been deleted. You can add tracks again or use Import Tracks.`;
+        progText.classList.add("hidden");
+      } catch (err) {
+        console.error(err);
+        $("clearTitle").textContent = "Clearing stopped";
+        text.textContent = `${done.toLocaleString()} tracks were deleted before an error: ${err.message}. Press Clear Library again to remove the rest.`;
+      }
+
+      busy = false;
+      noBtn.disabled = false;
+      noBtn.textContent = "Close";
+      $("clearActions").classList.remove("hidden");
+      yesBtn.classList.add("hidden");
+      overlay.querySelector(".dialog-warn").classList.add("hidden");
+      noBtn.onclick = () => window.location.reload();
+    });
+  </script>
+
+</body>
+</html>
